@@ -66,7 +66,7 @@ async function getPools (poolPositions) {
       if (a !== b) {
 
         const diff = difference(poolPositions[i], position)
-        event.emit('position:update', pool.poolPositions)
+        event.emit('update', pool.poolPositions)
 
         const message = "**Launch Pool Position Update** for `" + lpAddress + "`" + "\n" + "```" + JSON.stringify(poolPositions[i]) + "\n\n Updated Value(s): \n" + JSON.stringify(diff) + "```"
         postMessageToDiscord(message)
@@ -84,7 +84,7 @@ async function main () {
 
   setInterval(async () => getPools(poolPositions), 5000)
 
-  event.on('position:update', newPositions => {
+  event.on('update', newPositions => {
     poolPositions = newPositions 
   })
 
