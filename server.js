@@ -2,10 +2,7 @@
 require('dotenv').config()
 const axios = require('axios')
 const { PoolSchema } = require('./schemas')
-const { utils } = require('ethers')
-const { initialPoolPositions } = require('./data')
 const { EventEmitter } = require('events')
-const { inspect } = require('util')
 const { transform, isArray, isEqual, isObject } = require('lodash')
 
 const event = new EventEmitter()
@@ -60,13 +57,15 @@ async function getPools (poolPositions) {
     const pool = launchPool.data.data.allPools.list[0]
        
     const lpAddress = pool.poolPositions[0].id.split('-')[0]
+
+    if (!poolPositions.length) return event.emit('update', pool.poolPositions)
+
     pool.poolPositions.forEach((position, i) => {
       const a = JSON.stringify(poolPositions[i])
       const b = JSON.stringify(position)
       if (a !== b) {
 
         const diff = difference(poolPositions[i], position)
-        event.emit('position:change', { original: poolPositions[i], updated: position, diff })
         event.emit('position:update', pool.poolPositions)
 
         const message = "**Launch Pool Position Update** for `" + lpAddress + "`" + "\n" + "```" + JSON.stringify(poolPositions[i]) + "\n\n Updated Value(s): \n" + JSON.stringify(diff) + "```"
@@ -80,7 +79,7 @@ async function getPools (poolPositions) {
 }
 
 async function main () {
-  let poolPositions = initialPoolPositions
+  let poolPositions = []
   console.log(`[${Date.now()}] Watching Launch pool`)
 
   setInterval(async () => getPools(poolPositions), 5000)
