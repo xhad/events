@@ -67,7 +67,7 @@ async function getPools(poolPositions) {
 }
 
 async function diffPositions(pool, oldPool) {
-  if (!oldPool.positions.length) return
+  if (!oldPool) return
   pool.positions.forEach((position, i) => {
     const a = JSON.stringify(oldPool.positions[i])
     const b = JSON.stringify(position)
