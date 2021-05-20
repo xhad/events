@@ -37,12 +37,16 @@ function difference(origObj, newObj) {
   const changes = (newObj, origObj) => {
     let arrayIndexCounter = 0
     return transform(newObj, function (result, value, key) {
-      if (!isEqual(value, origObj[key])) {
-        let resultKey = isArray(origObj) ? arrayIndexCounter++ : key
-        result[resultKey] =
-          isObject(value) && isObject(origObj[key])
-            ? changes(value, origObj[key])
-            : value
+      try {
+        if (!isEqual(value, origObj[key])) {
+          let resultKey = isArray(origObj) ? arrayIndexCounter++ : key
+          result[resultKey] =
+            isObject(value) && isObject(origObj[key])
+              ? changes(value, origObj[key])
+              : value
+        }
+      } catch (err) {
+        null
       }
     })
   }
